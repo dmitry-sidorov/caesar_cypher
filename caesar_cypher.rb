@@ -10,32 +10,32 @@ end
 def caesar_cypher(phrase, shift)
   words = phrase.split.map { |word| word.split(//) }
   puts "Words: #{words}"
+  punctuation_marks = words.map! { |word| word.reject! { |letter| letter["/[^a-zA-Z]/"] }}
+  puts "Punctuation marks: #{punctuation_marks}"
   case_mask = words.map { |word| word.map { |letter| letter.is_upper? ? true : false }}
   puts "Case mask array: #{case_mask}"
   alphabet = ("a".."z").to_a
   indexes = words.map { |word| word.map { |letter| alphabet.index letter.downcase }}
   puts "Indexes: #{indexes}"
-  # indexes.map! { |word| word.map! { |index| index + shift }}
-  # puts "Shifted indexes: #{indexes}"
-  crypted = indexes.map! { |word| word.map! { |index| alphabet.rotate(shift)[index] }}
-  puts "Crypted message: #{crypted}"
-  case_fix(words, crypted)
-  crypted_phrase = crypted.map { |word| word.join }.join(' ')
-  puts crypted_phrase.inspect
-end
-
-def case_compare (standard, comparable)
-  if (standard.is_upper? && comparable.is_lower?) || (standard.is_lower? && comparable.is_upper?)
-    comparable.switchcase!
-  end
-end
-
-def case_fix (standards, comparables)
-  for i in standards
-    for j in standards[i]
-      case_compare(standards[j], comparables[j])
+  crypted_words = indexes.map! { |word| word.map! { |index| alphabet.rotate(shift)[index] }}
+  puts "Crypted message: #{crypted_words}"
+  puts "crypted_words[0]: #{crypted_words[0].length}"
+  (0...crypted_words.length).each do |i|
+    (0...crypted_words[i].length).each do |j|
+      crypted_words[i][j].swapcase! if case_mask[i][j]
     end
   end
+  # for i in (0...crypted_words.length)
+  #   for j in (0...crypted_words[i].length)
+  #     crypted_words[i][j].swapcase! if case_mask[i][j]
+  #   end
+  # end
+
+
+
+  puts "Crypted message with capitals: #{crypted_words}"
+  crypted_phrase = crypted_words.map { |word| word.join }.join(' ')
+  puts "Crypted message to_s: #{crypted_phrase}"
 end
 
 puts 'Enter phrase:'
